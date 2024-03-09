@@ -22,7 +22,7 @@
    <script src="https://js.arcgis.com/4.26/"></script>
 
    <script>
-    require(["esri/config", "esri/Map", "esri/views/MapView"], (esriConfig, Map, MapView) => {
+    require(["esri/config", "esri/Map", "esri/views/MapView", "esri/widgets/Locate", "esri/widgets/Search"], (esriConfig, Map, MapView, Locate, Search) => {
       esriConfig.apiKey = "AAPK2ea4bdf5d5574c329b85d88751414dd1yQfekPkVL0PzP258W8V8fsmldoY1ZzO7F41KzMzfSjLsfVyRNwlYkb9-VZUCZWPN";
   
       const map = new Map({
@@ -34,6 +34,22 @@
         map: map, // References the map object
         center: [-89.4012, 43.0731], // Center on Madison, WI
         zoom: 12 // Zoom level
+      });
+      const locateBtn = new Locate({
+        view: view
+      });
+
+      // Add the locate widget to the top left corner of the view
+      view.ui.add(locateBtn, {
+        position: "top-left"
+      });
+      const searchWidget = new Search({
+        view: view
+      });
+  
+      // Add the search widget to the top right corner of the view
+      view.ui.add(searchWidget, {
+        position: "top-right"
       });
     });
   </script>
