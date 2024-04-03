@@ -41,9 +41,17 @@
    <script src="https://js.arcgis.com/4.26/"></script>
 
    <script>
-    require(["esri/config", "esri/Map", "esri/views/MapView", "esri/widgets/Locate", "esri/widgets/Search", "esri/layers/FeatureLayer"], (esriConfig, Map, MapView, Locate, Search, FeatureLayer) => {
-      esriConfig.apiKey = "AAPK2ea4bdf5d5574c329b85d88751414dd1yQfekPkVL0PzP258W8V8fsmldoY1ZzO7F41KzMzfSjLsfVyRNwlYkb9-VZUCZWPN";
-  
+    require([
+    "esri/config",
+    "esri/Map",
+    "esri/views/MapView",
+    "esri/widgets/Locate",
+    "esri/widgets/Search",
+    "esri/layers/FeatureLayer",
+    "esri/widgets/Editor" // Import the Editor class
+  ], function(esriConfig, Map, MapView, Locate, Search, FeatureLayer, Editor) {
+    esriConfig.apiKey = "AAPK2ea4bdf5d5574c329b85d88751414dd1yQfekPkVL0PzP258W8V8fsmldoY1ZzO7F41KzMzfSjLsfVyRNwlYkb9-VZUCZWPN";
+
       const map = new Map({
         basemap: "satellite"
       });
@@ -64,7 +72,20 @@
       });
 
       map.add(layer);
+      const editor = new Editor({
+        view: view,
+        layerInfos: [{
+          layer: layer, // Use your FeatureLayer
+          fieldConfig: [{
+            name: "diameter", // Replace with the name of the diameter field
+            label: "Diameter",
+            editable: true
+          }]
+        }]
+      });
 
+      // Add the Editor widget to the top-right corner of the view
+      view.ui.add(editor, "top-right");
       // Add the locate widget to the top left corner of the view
       view.ui.add(locateBtn, {
         position: "top-left"
