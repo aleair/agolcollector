@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <!-- Meta tags for character encoding and viewport settings -->
     <meta charset="utf-8" />
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    
+    <!-- Title of the webpage -->
     <title>Data Collector for AGOL</title>
+    
+    <!-- Internal styles for layout and appearance -->
     <style>
       html,
       body,
@@ -37,45 +42,58 @@
         right: 10px;
       }
     </style>
+    
+    <!-- External stylesheet for ArcGIS map -->
     <link rel="stylesheet" href="https://js.arcgis.com/4.26/esri/themes/light/main.css" />
+    
+    <!-- ArcGIS JavaScript API -->
     <script src="https://js.arcgis.com/4.26/"></script>
+    
+    <!-- JavaScript code -->
     <script>
       require([
-        "esri/Graphic",
-        "esri/config",
-        "esri/Map",
-        "esri/views/MapView",
-        "esri/widgets/Locate",
-        "esri/widgets/Search",
-        "esri/layers/FeatureLayer",
-        "esri/widgets/Editor"
+        "esri/Graphic", // Import Graphic module for creating graphics
+        "esri/config", // Import config module for configuring ArcGIS API settings
+        "esri/Map", // Import Map module for creating a map instance
+        "esri/views/MapView", // Import MapView module for creating a view of the map
+        "esri/widgets/Locate", // Import Locate widget for adding a locate button
+        "esri/widgets/Search", // Import Search widget for adding a search functionality
+        "esri/layers/FeatureLayer", // Import FeatureLayer module for adding feature layers
+        "esri/widgets/Editor" // Import Editor widget for enabling feature editing
       ], function(Graphic, esriConfig, Map, MapView, Locate, Search, FeatureLayer, Editor) {
+        // Set API key for ArcGIS
         esriConfig.apiKey = "AAPK2ea4bdf5d5574c329b85d88751414dd1yQfekPkVL0PzP258W8V8fsmldoY1ZzO7F41KzMzfSjLsfVyRNwlYkb9-VZUCZWPN";
 
+        // Create a new map instance with satellite basemap
         const map = new Map({
           basemap: "satellite"
         });
 
+        // Create a new MapView instance
         const view = new MapView({
-          container: "viewDiv",
-          map: map,
-          center: [-89.4012, 43.0731],
-          zoom: 12
+          container: "viewDiv", // Specify the container for the map
+          map: map, // Set the map instance
+          center: [-89.4012, 43.0731], // Set initial center coordinates
+          zoom: 12 // Set initial zoom level
         });
 
+        // Create a new Locate widget instance
         const locateBtn = new Locate({
-          view: view
+          view: view // Specify the view for the locate button
         });
 
+        // Create a new FeatureLayer instance for data storage
         const layer = new FeatureLayer({
           url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/survey123_da731d3dde574559ab581824871d1a8f_results/FeatureServer"
         });
 
+        // Add the feature layer to the map
         map.add(layer);
 
+        // Create a new Editor widget instance
         const editor = new Editor({
-          view: view,
-          layerInfos: [{
+          view: view, // Specify the view for the editor
+          layerInfos: [{ // Specify the layer information for the editor
             layer: layer,
             fieldConfig: [{
               name: "diameter",
@@ -85,27 +103,35 @@
           }]
         });
 
+        // Add the editor widget to the view
         view.ui.add(editor, "top-right");
 
+        // Add the locate button to the view
         view.ui.add(locateBtn, {
           position: "top-left"
         });
 
+        // Create a new Search widget instance
         const searchWidget = new Search({
-          view: view
+          view: view // Specify the view for the search widget
         });
 
+        // Add the search widget to the view
         view.ui.add(searchWidget, {
           position: "bottom-right"
         });
 
+        // Event listener for the diameter form submission
         document.getElementById('diameterForm').addEventListener('submit', function(event) {
-          event.preventDefault();
+          event.preventDefault(); // Prevent default form submission behavior
 
+          // Get the value of diameter from the input field
           const diameter = document.getElementById('diameter').value;
 
+          // Get the geometry of the search result graphic
           const point = searchWidget.resultGraphic.geometry;
 
+          // Create a new graphic with diameter attribute
           const feature = new Graphic({
             geometry: point,
             attributes: {
@@ -113,6 +139,7 @@
             }
           });
 
+          // Apply edits to the feature layer (add new feature)
           layer.applyEdits({
             addFeatures: [feature]
           });
@@ -121,12 +148,17 @@
     </script>
   </head>
   <body>
+    <!-- Button to add a new record (opens a new webpage) -->
     <a href="https://survey123.arcgis.com/share/55a1dcb95cfe435a8b16cebfd83afef4" target="_blank" class="addRecordBtn">Add Record</a>
+    
+    <!-- Form for submitting diameter data -->
     <form id="diameterForm">
       <label for="diameter">Diameter:</label>
       <input type="number" id="diameter" name="diameter">
       <input type="submit" value="Submit">
     </form>
+    
+    <!-- Container for the map view -->
     <div id="viewDiv"></div>
   </body>
 </html>
